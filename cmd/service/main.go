@@ -11,8 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	deliveryHttp "github.com/blackhorseya/todolist/app/delivery/http"
-	"github.com/blackhorseya/todolist/app/delivery/http/handler"
+	appWire "github.com/blackhorseya/todolist/app/infra/wire"
 	_ "github.com/blackhorseya/todolist/docs" // 匯入 swagger 文件
 )
 
@@ -32,22 +31,15 @@ import (
 
 func main() {
 	// 初始化應用程式
-	app, err := InitializeApp("")
+	app, err := appWire.InitializeApp("")
 	if err != nil {
 		log.Fatalf("初始化應用程式失敗: %v", err)
 	}
 
-	// 建立 HTTP 處理器
-	todoHandler := handler.NewTodoHandler(app.TodoUseCase)
-	categoryHandler := handler.NewCategoryHandler(app.CategoryUseCase)
-
-	// 建立路由器
-	router := deliveryHttp.NewRouter(todoHandler, categoryHandler)
-
 	// 建立 HTTP 伺服器
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", app.Config.Server.Port),
-		Handler:      router,
+		Handler:      app.Router,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}

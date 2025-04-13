@@ -4,13 +4,16 @@
 //go:build !wireinject
 // +build !wireinject
 
-package main
+package wire
 
 import (
 	"context"
-	"github.com/blackhorseya/todolist/configs"
+	"github.com/blackhorseya/todolist/app/delivery/http"
+	"github.com/blackhorseya/todolist/app/delivery/http/handler"
 	"github.com/blackhorseya/todolist/app/domain/repository"
 	"github.com/blackhorseya/todolist/app/usecase"
+	"github.com/blackhorseya/todolist/configs"
+	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -30,33 +33,16 @@ func InitializeApp(configPath string) (*NewApp, error) {
 	}
 	todoRepository := provideTodoRepo(client)
 	categoryRepository := provideCategoryRepo(client)
-	todoUseCase := provideNewTodoUseCase(todoRepository, categoryRepository)
-	categoryUseCase := provideNewCategoryUseCase(categoryRepository)
-	newApp := ProvideApp(config, todoUseCase, categoryUseCase)
+	todoUseCase := usecase.NewTodoUseCase(todoRepository, categoryRepository)
+	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)
+	todoHandler := provideTodoHandler(todoUseCase)
+	categoryHandler := provideCategoryHandler(categoryUseCase)
+	engine := provideRouter(todoHandler, categoryHandler)
+	newApp := ProvideApp(config, todoUseCase, categoryUseCase, engine)
 	return newApp, nil
 }
 
 // wire.go:
-
-// NewApp 建立應用程式實例
-type NewApp struct {
-	Config          *configs.Config
-	TodoUseCase     usecase.TodoUseCase
-	CategoryUseCase usecase.CategoryUseCase
-}
-
-// ProvideApp 提供應用程式實例
-func ProvideApp(
-	config *configs.Config,
-	todoUC usecase.TodoUseCase,
-	categoryUC usecase.CategoryUseCase,
-) *NewApp {
-	return &NewApp{
-		Config:          config,
-		TodoUseCase:     todoUC,
-		CategoryUseCase: categoryUC,
-	}
-}
 
 // provideMongoClient 提供 MongoDB 客戶端
 func provideMongoClient(config *configs.Config) (*mongo.Client, error) {
@@ -69,33 +55,35 @@ func provideMongoClient(config *configs.Config) (*mongo.Client, error) {
 
 // provideTodoRepo 提供待辦事項儲存庫
 func provideTodoRepo(client *mongo.Client) repository.TodoRepository {
-
 	return nil
 }
 
 // provideCategoryRepo 提供分類儲存庫
 func provideCategoryRepo(client *mongo.Client) repository.CategoryRepository {
-
 	return nil
 }
 
-// provideNewTodoUseCase 提供待辦事項使用案例
-func provideNewTodoUseCase(todoRepo repository.TodoRepository, categoryRepo repository.CategoryRepository) usecase.TodoUseCase {
-	return usecase.NewTodoUseCase(todoRepo, categoryRepo)
+// provideTodoHandler 提供待辦事項處理器
+func provideTodoHandler(uc usecase.TodoUseCase) *handler.TodoHandler {
+	return handler.NewTodoHandler(uc)
 }
 
-// provideNewCategoryUseCase 提供分類使用案例
-func provideNewCategoryUseCase(repo repository.CategoryRepository) usecase.CategoryUseCase {
-	return usecase.NewCategoryUseCase(repo)
+// provideCategoryHandler 提供分類處理器
+func provideCategoryHandler(uc usecase.CategoryUseCase) *handler.CategoryHandler {
+	return handler.NewCategoryHandler(uc)
+}
+
+// provideRouter 提供路由器
+func provideRouter(todoHandler *handler.TodoHandler, categoryHandler *handler.CategoryHandler) *gin.Engine {
+	return http.NewRouter(todoHandler, categoryHandler)
 }
 
 var providerSet = wire.NewSet(configs.LoadEnv, provideMongoClient,
 
 	provideTodoRepo,
-	provideCategoryRepo,
-
-	provideNewTodoUseCase,
-	provideNewCategoryUseCase,
+	provideCategoryRepo, usecase.NewTodoUseCase, usecase.NewCategoryUseCase, provideTodoHandler,
+	provideCategoryHandler,
+	provideRouter,
 
 	ProvideApp,
 )

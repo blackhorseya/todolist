@@ -3,8 +3,7 @@ package handler
 import (
 	"net/http"
 
-	httpDelivery "github.com/blackhorseya/todolist/app/delivery/http"
-	"github.com/blackhorseya/todolist/app/delivery/http/handler"
+	appWire "github.com/blackhorseya/todolist/app/infra/wire"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,11 +12,14 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// 設定 Gin 為發行模式
 	gin.SetMode(gin.ReleaseMode)
 
-	// 建立路由器
-	todoHandler := &handler.TodoHandler{}
-	categoryHandler := &handler.CategoryHandler{}
-	router := httpDelivery.NewRouter(todoHandler, categoryHandler)
+	// 使用 Wire 初始化應用程式
+	app, err := appWire.InitializeApp("")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
 
 	// 使用 Gin 處理請求
-	router.ServeHTTP(w, r)
+	app.Router.ServeHTTP(w, r)
 }
