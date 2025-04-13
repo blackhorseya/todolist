@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/blackhorseya/todolist/internal/domain/entity"
-	"github.com/blackhorseya/todolist/internal/domain/repository"
-	"github.com/blackhorseya/todolist/internal/usecase"
+	"github.com/blackhorseya/todolist/app/domain/entity"
+	"github.com/blackhorseya/todolist/app/domain/repository"
+	"github.com/blackhorseya/todolist/app/usecase"
 	"github.com/gin-gonic/gin"
 )
 

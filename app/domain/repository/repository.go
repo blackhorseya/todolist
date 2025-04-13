@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/blackhorseya/todolist/internal/domain/entity"
+	"github.com/blackhorseya/todolist/app/domain/entity"
 )
 
 // TodoRepository 定義待辦事項儲存庫介面

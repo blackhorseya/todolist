@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/blackhorseya/todolist/internal/domain/entity"
-	"github.com/blackhorseya/todolist/internal/domain/repository"
+	"github.com/blackhorseya/todolist/app/domain/entity"
+	"github.com/blackhorseya/todolist/app/domain/repository"
 )
 
 // TodoUseCase 定義待辦事項的使用案例介面

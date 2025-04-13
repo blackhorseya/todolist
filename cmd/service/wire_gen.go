@@ -9,8 +9,8 @@ package main
 import (
 	"context"
 	"github.com/blackhorseya/todolist/configs"
-	"github.com/blackhorseya/todolist/internal/domain/repository"
-	"github.com/blackhorseya/todolist/internal/usecase"
+	"github.com/blackhorseya/todolist/app/domain/repository"
+	"github.com/blackhorseya/todolist/app/usecase"
 	"github.com/google/wire"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

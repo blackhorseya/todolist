@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
-	"github.com/blackhorseya/todolist/internal/domain/entity"
-	"github.com/blackhorseya/todolist/internal/domain/repository"
+	"github.com/blackhorseya/todolist/app/domain/entity"
+	"github.com/blackhorseya/todolist/app/domain/repository"
 )
 
 // CategoryUseCase 定義分類的使用案例介面

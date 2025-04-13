@@ -1,11 +1,11 @@
 package http
 
 import (
+	"github.com/blackhorseya/todolist/app/delivery/http/handler"
+	_ "github.com/blackhorseya/todolist/docs" // 引入 Swagger 文件
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-
-	"github.com/blackhorseya/todolist/internal/delivery/http/handler"
 )
 
 // NewRouter 建立新的路由器
@@ -16,7 +16,7 @@ func NewRouter(
 	r := gin.Default()
 
 	// Swagger 文件路由
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// API v1 路由群組
 	v1 := r.Group("/api/v1")

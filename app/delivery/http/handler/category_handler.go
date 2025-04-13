@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/blackhorseya/todolist/internal/usecase"
+	"github.com/blackhorseya/todolist/app/usecase"
 	"github.com/gin-gonic/gin"
 )
 
