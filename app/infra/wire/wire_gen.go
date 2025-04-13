@@ -11,6 +11,7 @@ import (
 	"github.com/blackhorseya/todolist/app/delivery/http"
 	"github.com/blackhorseya/todolist/app/delivery/http/handler"
 	"github.com/blackhorseya/todolist/app/domain/repository"
+	"github.com/blackhorseya/todolist/app/infra/persistence/mongodb"
 	"github.com/blackhorseya/todolist/app/usecase"
 	"github.com/blackhorseya/todolist/configs"
 	"github.com/gin-gonic/gin"
@@ -55,12 +56,12 @@ func provideMongoClient(config *configs.Config) (*mongo.Client, error) {
 
 // provideTodoRepo 提供待辦事項儲存庫
 func provideTodoRepo(client *mongo.Client) repository.TodoRepository {
-	return nil
+	return mongodb.NewMongoTodoRepository(client)
 }
 
 // provideCategoryRepo 提供分類儲存庫
 func provideCategoryRepo(client *mongo.Client) repository.CategoryRepository {
-	return nil
+	return mongodb.NewMongoCategoryRepository(client)
 }
 
 // provideTodoHandler 提供待辦事項處理器
