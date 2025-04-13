@@ -3,6 +3,7 @@ package http
 import (
 	"github.com/blackhorseya/todolist/app/delivery/http/handler"
 	_ "github.com/blackhorseya/todolist/docs" // 引入 Swagger 文件
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -14,6 +15,13 @@ func NewRouter(
 	categoryHandler *handler.CategoryHandler,
 ) *gin.Engine {
 	r := gin.Default()
+
+	// 設定 CORS 中介軟體
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:    []string{"Origin", "Content-Type", "Authorization"},
+	}))
 
 	// Swagger 文件路由
 	r.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

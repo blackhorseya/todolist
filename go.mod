@@ -3,6 +3,7 @@ module github.com/blackhorseya/todolist
 go 1.23.2
 
 require (
+	github.com/gin-contrib/cors v1.7.5
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golangci/golangci-lint v1.64.8
 	github.com/google/wire v0.6.0
