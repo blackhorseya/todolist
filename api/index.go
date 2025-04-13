@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// HealthResponse 定義健康檢查的回應資料
 type HealthResponse struct {
 	Status    string    `json:"status"`
 	Timestamp time.Time `json:"timestamp"`

@@ -1,74 +1,75 @@
-# Go DDD Template Project
+# Go DDD 待辦事項清單專案
 
-This is a template project implementing Clean Architecture and Domain-Driven Design (DDD) principles in Go. Use this template as a starting point for your domain-driven microservices.
+這是一個採用 Clean Architecture 和領域驅動設計(DDD)原則實作的待辦事項清單專案。此專案展示如何使用 DDD 方法建構一個具備良好架構的待辦事項管理系統。
 
-## Project Structure
+## 專案結構
 
 ```
 .
-├── cmd/            # Application entrypoints
-├── configs/        # Configuration files and structures
-├── internal/       # Private application code
-│   ├── domain/     # Domain layer: entities, value objects, domain services
-│   ├── usecase/    # Use case layer: commands, queries, behaviors
-│   ├── delivery/   # Interface adapters (HTTP/gRPC)
-│   ├── infra/      # Infrastructure implementations
-│   └── shared/     # Shared utilities
-├── pkg/            # Public libraries
-└── tests/          # Test suites
+├── cmd/            # 應用程式進入點
+├── configs/        # 設定檔案與結構
+├── internal/       # 私有應用程式碼
+│   ├── domain/     # 領域層：實體、值物件、領域服務
+│   ├── usecase/    # 使用案例層：命令、查詢、行為
+│   ├── delivery/   # 介面配接器 (HTTP/gRPC)
+│   ├── infra/      # 基礎設施實作
+│   └── shared/     # 共用工具
+├── pkg/            # 公開函式庫
+└── tests/          # 測試套件
 ```
 
-## Getting Started
+## 核心功能
 
-1. Click "Use this template" on GitHub to create a new project
-2. Clone your new repository
-3. Update the module name in `go.mod`
-4. Start implementing your domain model in `internal/domain`
+1. 待辦事項的建立、讀取、更新與刪除
+2. 待辦事項的優先級別管理
+3. 待辦事項狀態追蹤
+4. 待辦事項分類管理
+5. 使用者管理與授權
 
-## Architecture Overview
+## 架構概觀
 
-This template follows Clean Architecture and DDD principles:
+此專案遵循 Clean Architecture 與 DDD 原則：
 
-- **Domain Layer**: Core business logic and rules, including:
-  - Entities and Aggregates
-  - Value Objects
-  - Domain Services
-  - Repository Interfaces
+- **領域層**: 核心業務邏輯與規則，包含：
+  - 實體與聚合（待辦事項、分類、使用者）
+  - 值物件（優先級別、狀態）
+  - 領域服務
+  - 儲存庫介面
   
-- **Use Case Layer**: Application flows and coordination:
-  - Commands (write operations)
-  - Queries (read operations)
-  - Behaviors (complex workflows)
-  - Event Handlers
+- **使用案例層**: 應用流程與協調：
+  - 命令（建立、更新、刪除待辦事項）
+  - 查詢（搜尋、過濾待辦事項）
+  - 行為（狀態轉換、優先級管理）
+  - 事件處理器
 
-- **Interface Adapters**: Multiple delivery mechanisms:
+- **介面配接器**: 多重傳遞機制：
   - HTTP REST APIs
-  - gRPC Services
-  - Message Consumers
+  - gRPC 服務
+  - 訊息消費者
 
-- **Infrastructure**: External concerns:
-  - Database Implementations
-  - External Service Clients
-  - Message Brokers
+- **基礎設施**: 外部關注點：
+  - 資料庫實作
+  - 外部服務客戶端
+  - 訊息中介者
 
-## Key Design Principles
+## 設計原則
 
-1. Dependencies flow inward (domain at the center)
-2. Domain layer has no external dependencies
-3. Use interfaces for infrastructure concerns
-4. Separation of commands and queries (CQRS)
-5. Domain events for cross-boundary communication
+1. 相依性由外向內流動（領域位於中心）
+2. 領域層不具有外部相依性
+3. 使用介面進行基礎設施關注點
+4. 命令與查詢分離 (CQRS)
+5. 使用領域事件進行跨邊界通訊
 
-## Documentation
+## 文件
 
-Each directory contains its own README.md with specific guidance for that component.
+每個目錄都包含其專屬的 README.md，提供該元件的具體指引。
 
-## Testing
+## 測試
 
-- Unit tests alongside the code
-- Integration tests in /tests
-- E2E tests in /tests/e2e
+- 單元測試與程式碼相鄰
+- 整合測試位於 /tests
+- 端對端測試位於 /tests/e2e
 
-## License
+## 授權
 
-MIT License - see [LICENSE](LICENSE) file for details
+MIT 授權 - 詳見 [LICENSE](LICENSE) 檔案
