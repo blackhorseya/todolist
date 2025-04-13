@@ -4,6 +4,7 @@ go 1.23.2
 
 require (
 	github.com/golangci/golangci-lint v1.64.8
+	github.com/joho/godotenv v1.5.1
 	github.com/swaggo/swag v1.16.4
 	go.uber.org/mock v0.5.1
 	gopkg.in/yaml.v3 v3.0.1

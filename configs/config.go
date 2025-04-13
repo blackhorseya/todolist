@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v3"
 )
 
@@ -20,12 +21,20 @@ type ServerConfig struct {
 
 // DatabaseConfig 代表資料庫設定
 type DatabaseConfig struct {
-	Driver   string `yaml:"driver"`
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
-	DBName   string `yaml:"dbname"`
+	ConnString string `yaml:"dsn"`
+}
+
+// LoadEnv 載入環境變數
+func LoadEnv(envFile string) error {
+	if envFile == "" {
+		envFile = ".env"
+	}
+
+	err := godotenv.Load(envFile)
+	if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("載入環境變數檔案錯誤: %w", err)
+	}
+	return nil
 }
 
 // LoadConfig 從 YAML 檔案載入設定
@@ -41,11 +50,15 @@ func LoadConfig(filename string) (*Config, error) {
 		return nil, fmt.Errorf("解析設定檔錯誤: %w", err)
 	}
 
+	// 優先從環境變數讀取資料庫連線字串
+	if databaseDSN := os.Getenv("DATABASE_DSN"); databaseDSN != "" {
+		config.Database.ConnString = databaseDSN
+	}
+
 	return config, nil
 }
 
-// DSN 取得資料庫連線字串
-func (c *DatabaseConfig) DSN() string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true",
-		c.User, c.Password, c.Host, c.Port, c.DBName)
+// GetDSN 取得資料庫連線字串
+func (c *DatabaseConfig) GetDSN() string {
+	return c.ConnString
 }

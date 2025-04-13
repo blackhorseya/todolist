@@ -3,8 +3,4 @@ server:
   port: 8080
 
 database:
-  host: "localhost"
-  port: 5432
-  name: "app_db"
-  user: "postgres"
-  password: "postgres"
+  dsn: "mongodb://localhost:27017/todolist"

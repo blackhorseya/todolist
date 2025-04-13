@@ -15,7 +15,7 @@ import (
 
 func main() {
 	// 載入設定檔
-	cfg, err := configs.LoadConfig("configs/config.yaml")
+	cfg, err := configs.LoadConfig("../../configs/config.yaml")
 	if err != nil {
 		log.Fatalf("載入設定檔失敗: %v", err)
 	}
