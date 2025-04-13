@@ -8,31 +8,31 @@ import (
 type Priority int
 
 const (
-	Low Priority = iota + 1
-	Medium
-	High
+	Low    Priority = iota + 1 // `json:"1"`
+	Medium                     // `json:"2"`
+	High                       // `json:"3"`
 )
 
 // Status 定義待辦事項的狀態
 type Status int
 
 const (
-	TodoStatus Status = iota + 1
-	InProgress
-	Done
+	TodoStatus Status = iota + 1 // `json:"1"`
+	InProgress                   // `json:"2"`
+	Done                         // `json:"3"`
 )
 
 // Todo 代表一個待辦事項實體
 type Todo struct {
-	ID          string
-	Title       string
-	Description string
-	Priority    Priority
-	Status      Status
-	DueDate     time.Time
-	CategoryID  string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID          string    `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Priority    Priority  `json:"priority"`
+	Status      Status    `json:"status"`
+	DueDate     time.Time `json:"dueDate"`
+	CategoryID  string    `json:"categoryId"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 // NewTodo 建立新的待辦事項
