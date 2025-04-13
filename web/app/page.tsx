@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Category, Todo, Priority, TodoStatus } from "@/types/entity";
+import { CreateCategoryRequest, CreateTodoRequest } from "@/types/api";
 import CategoryList from "./components/CategoryList";
 import CreateCategoryForm from "./components/CreateCategoryForm";
 import CreateTodoForm from "./components/CreateTodoForm";
 import TodoItem from "./components/TodoItem";
+import { CategoryService } from "./services/categoryService";
+import { TodoService } from "./services/todoService";
 
 export default function Home() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -13,6 +16,92 @@ export default function Home() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>();
   const [showCreateCategory, setShowCreateCategory] = useState(false);
   const [showCreateTodo, setShowCreateTodo] = useState(false);
+
+  const categoryService = new CategoryService();
+  const todoService = new TodoService();
+
+  // 載入分類列表
+  const loadCategories = useCallback(async () => {
+    const response = await categoryService.listCategories();
+    if (response.data) {
+      setCategories(response.data);
+    }
+  }, []);
+
+  // 載入待辦事項列表
+  const loadTodos = useCallback(async () => {
+    const response = await todoService.listTodos(
+      selectedCategoryId ? { categoryId: selectedCategoryId } : undefined
+    );
+    if (response.data) {
+      setTodos(response.data);
+    }
+  }, [selectedCategoryId]);
+
+  // 初始載入
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
+
+  // 當選擇的分類改變時重新載入待辦事項
+  useEffect(() => {
+    loadTodos();
+  }, [loadTodos, selectedCategoryId]);
+
+  // 處理建立分類
+  const handleCreateCategory = async (data: CreateCategoryRequest) => {
+    const response = await categoryService.createCategory(data);
+    if (response.data) {
+      await loadCategories();
+      setShowCreateCategory(false);
+    }
+  };
+
+  // 處理刪除分類
+  const handleDeleteCategory = async (categoryId: string) => {
+    const response = await categoryService.deleteCategory(categoryId);
+    if (!response.error) {
+      await loadCategories();
+      if (selectedCategoryId === categoryId) {
+        setSelectedCategoryId(undefined);
+      }
+    }
+  };
+
+  // 處理編輯分類
+  const handleEditCategory = async (category: Category) => {
+    // TODO: 實作編輯分類的 UI
+  };
+
+  // 處理建立待辦事項
+  const handleCreateTodo = async (data: CreateTodoRequest) => {
+    const response = await todoService.createTodo(data);
+    if (response.data) {
+      await loadTodos();
+      setShowCreateTodo(false);
+    }
+  };
+
+  // 處理更新待辦事項狀態
+  const handleUpdateTodoStatus = async (id: string, status: TodoStatus) => {
+    const response = await todoService.updateTodo(id, { status });
+    if (response.data) {
+      await loadTodos();
+    }
+  };
+
+  // 處理刪除待辦事項
+  const handleDeleteTodo = async (id: string) => {
+    const response = await todoService.deleteTodo(id);
+    if (!response.error) {
+      await loadTodos();
+    }
+  };
+
+  // 處理編輯待辦事項
+  const handleEditTodo = async (todo: Todo) => {
+    // TODO: 實作編輯待辦事項的 UI
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
@@ -27,10 +116,7 @@ export default function Home() {
           <aside className="space-y-4">
             {showCreateCategory ? (
               <CreateCategoryForm
-                onSubmit={(data) => {
-                  // TODO: 實作建立分類
-                  setShowCreateCategory(false);
-                }}
+                onSubmit={handleCreateCategory}
                 onCancel={() => setShowCreateCategory(false)}
               />
             ) : (
@@ -39,12 +125,8 @@ export default function Home() {
                 selectedCategoryId={selectedCategoryId}
                 onSelect={setSelectedCategoryId}
                 onCreateClick={() => setShowCreateCategory(true)}
-                onEditClick={(category) => {
-                  // TODO: 實作編輯分類
-                }}
-                onDeleteClick={(categoryId) => {
-                  // TODO: 實作刪除分類
-                }}
+                onEditClick={handleEditCategory}
+                onDeleteClick={handleDeleteCategory}
               />
             )}
           </aside>
@@ -69,10 +151,7 @@ export default function Home() {
               <div className="bg-white dark:bg-gray-800 rounded-lg p-4 todo-shadow">
                 <CreateTodoForm
                   categories={categories}
-                  onSubmit={(data) => {
-                    // TODO: 實作建立待辦事項
-                    setShowCreateTodo(false);
-                  }}
+                  onSubmit={handleCreateTodo}
                   onCancel={() => setShowCreateTodo(false)}
                 />
               </div>
@@ -85,15 +164,9 @@ export default function Home() {
                   <TodoItem
                     key={todo.id}
                     todo={todo}
-                    onStatusChange={(id, status) => {
-                      // TODO: 實作狀態更新
-                    }}
-                    onDelete={(id) => {
-                      // TODO: 實作刪除
-                    }}
-                    onEdit={(todo) => {
-                      // TODO: 實作編輯
-                    }}
+                    onStatusChange={handleUpdateTodoStatus}
+                    onDelete={handleDeleteTodo}
+                    onEdit={handleEditTodo}
                   />
                 ))}
               </div>

@@ -9,6 +9,14 @@ interface CategoryListProps {
   onDeleteClick: (categoryId: string) => void;
 }
 
+interface CategoryItem {
+  id: string;
+  name: string;
+  onClick: () => void;
+  isSelected: boolean;
+  category?: Category;
+}
+
 export default function CategoryList({
   categories,
   selectedCategoryId,
@@ -17,6 +25,34 @@ export default function CategoryList({
   onEditClick,
   onDeleteClick,
 }: CategoryListProps) {
+  const categoryItems: CategoryItem[] = [
+    {
+      id: "all",
+      name: "所有事項",
+      onClick: () => onSelect(undefined),
+      isSelected: !selectedCategoryId,
+    },
+    ...categories.map((category) => ({
+      id: category.id,
+      name: category.name,
+      onClick: () => onSelect(category.id),
+      isSelected: selectedCategoryId === category.id,
+      category,
+    })),
+  ];
+
+  const handleEditClick = (item: CategoryItem) => {
+    if (item.category) {
+      onEditClick(item.category);
+    }
+  };
+
+  const handleDeleteClick = (item: CategoryItem) => {
+    if (item.category) {
+      onDeleteClick(item.category.id);
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 todo-shadow">
       <h2 className="text-lg font-semibold mb-4">分類</h2>
@@ -27,47 +63,39 @@ export default function CategoryList({
         新增分類
       </button>
       <div className="space-y-2">
-        <button
-          onClick={() => onSelect(undefined)}
-          className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-            !selectedCategoryId
-              ? "bg-primary/10 text-primary"
-              : "bg-secondary hover:bg-secondary-hover"
-          }`}
-        >
-          所有事項
-        </button>
-        {categories.map((category) => (
+        {categoryItems.map((item) => (
           <div
-            key={category.id}
+            key={item.id}
             className={`group flex items-center gap-2 rounded-lg ${
-              selectedCategoryId === category.id
+              item.isSelected
                 ? "bg-primary/10"
                 : "bg-secondary hover:bg-secondary-hover"
             }`}
           >
             <button
-              onClick={() => onSelect(category.id)}
+              onClick={item.onClick}
               className="flex-1 text-left px-4 py-2"
             >
-              {category.name}
+              {item.name}
             </button>
-            <div className="hidden group-hover:flex items-center gap-1 px-2">
-              <button
-                onClick={() => onEditClick(category)}
-                className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
-              >
-                <span className="sr-only">編輯</span>
-                ✏️
-              </button>
-              <button
-                onClick={() => onDeleteClick(category.id)}
-                className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
-              >
-                <span className="sr-only">刪除</span>
-                🗑️
-              </button>
-            </div>
+            {item.category && (
+              <div className="hidden group-hover:flex items-center gap-1 px-2">
+                <button
+                  onClick={() => handleEditClick(item)}
+                  className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+                >
+                  <span className="sr-only">編輯</span>
+                  ✏️
+                </button>
+                <button
+                  onClick={() => handleDeleteClick(item)}
+                  className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+                >
+                  <span className="sr-only">刪除</span>
+                  🗑️
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
