@@ -84,7 +84,19 @@ export default function Home() {
 
   // 處理更新待辦事項狀態
   const handleUpdateTodoStatus = async (id: string, status: TodoStatus) => {
-    const response = await todoService.updateTodo(id, { status });
+    // 先取得現有待辦事項
+    const todoResponse = await todoService.getTodo(id);
+    if (!todoResponse.data) {
+      return;
+    }
+
+    // 更新狀態，保留其他欄位不變
+    const response = await todoService.updateTodo(id, {
+      ...todoResponse.data,
+      status,
+      dueDate: todoResponse.data.dueDate, // 保持原有的日期格式
+    });
+    
     if (response.data) {
       await loadTodos();
     }

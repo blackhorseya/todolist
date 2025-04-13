@@ -23,7 +23,12 @@ export default function CreateTodoForm({
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    // 將日期轉換為 RFC3339 格式
+    const rfc3339Date = new Date(formData.dueDate).toISOString();
+    onSubmit({
+      ...formData,
+      dueDate: rfc3339Date,
+    });
   };
 
   return (
