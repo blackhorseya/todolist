@@ -16,6 +16,8 @@ export default function Home() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>();
   const [showCreateCategory, setShowCreateCategory] = useState(false);
   const [showCreateTodo, setShowCreateTodo] = useState(false);
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   const categoryService = new CategoryService();
   const todoService = new TodoService();
@@ -68,9 +70,22 @@ export default function Home() {
     }
   };
 
+  // 處理編輯分類提交
+  const handleEditCategorySubmit = async (data: CreateCategoryRequest) => {
+    if (!editingCategory) return;
+
+    const response = await categoryService.updateCategory(editingCategory.id, data);
+    if (response.data) {
+      await loadCategories();
+      setEditingCategory(null);
+      setShowCreateCategory(false);
+    }
+  };
+
   // 處理編輯分類
   const handleEditCategory = async (category: Category) => {
-    // TODO: 實作編輯分類的 UI
+    setEditingCategory(category);
+    setShowCreateCategory(true);
   };
 
   // 處理建立待辦事項
@@ -79,6 +94,21 @@ export default function Home() {
     if (response.data) {
       await loadTodos();
       setShowCreateTodo(false);
+    }
+  };
+
+  // 處理更新待辦事項
+  const handleEditTodoSubmit = async (data: CreateTodoRequest) => {
+    if (!editingTodo) return;
+
+    const response = await todoService.updateTodo(editingTodo.id, {
+      ...data,
+      status: editingTodo.status
+    });
+
+    if (response.data) {
+      await loadTodos();
+      setEditingTodo(null);
     }
   };
 
@@ -112,7 +142,7 @@ export default function Home() {
 
   // 處理編輯待辦事項
   const handleEditTodo = async (todo: Todo) => {
-    // TODO: 實作編輯待辦事項的 UI
+    setEditingTodo(todo);
   };
 
   return (
@@ -128,8 +158,15 @@ export default function Home() {
           <aside className="space-y-4">
             {showCreateCategory ? (
               <CreateCategoryForm
-                onSubmit={handleCreateCategory}
-                onCancel={() => setShowCreateCategory(false)}
+                initialData={editingCategory ? {
+                  name: editingCategory.name,
+                  description: editingCategory.description || ""
+                } : undefined}
+                onSubmit={editingCategory ? handleEditCategorySubmit : handleCreateCategory}
+                onCancel={() => {
+                  setShowCreateCategory(false);
+                  setEditingCategory(null);
+                }}
               />
             ) : (
               <CategoryList
@@ -159,12 +196,22 @@ export default function Home() {
               </button>
             </div>
 
-            {showCreateTodo && (
+            {(showCreateTodo || editingTodo) && (
               <div className="bg-white dark:bg-gray-800 rounded-lg p-4 todo-shadow">
                 <CreateTodoForm
                   categories={categories}
-                  onSubmit={handleCreateTodo}
-                  onCancel={() => setShowCreateTodo(false)}
+                  initialData={editingTodo ? {
+                    title: editingTodo.title,
+                    description: editingTodo.description || "",
+                    categoryId: editingTodo.categoryID,
+                    priority: editingTodo.priority,
+                    dueDate: new Date(editingTodo.dueDate).toISOString().split("T")[0]
+                  } : undefined}
+                  onSubmit={editingTodo ? handleEditTodoSubmit : handleCreateTodo}
+                  onCancel={() => {
+                    setShowCreateTodo(false);
+                    setEditingTodo(null);
+                  }}
                 />
               </div>
             )}

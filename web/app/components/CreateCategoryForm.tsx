@@ -2,18 +2,22 @@ import { CreateCategoryRequest } from "@/types/api";
 import { FormEvent, useState } from "react";
 
 interface CreateCategoryFormProps {
+  initialData?: CreateCategoryRequest;
   onSubmit: (data: CreateCategoryRequest) => void;
   onCancel: () => void;
 }
 
 export default function CreateCategoryForm({
+  initialData,
   onSubmit,
   onCancel,
 }: CreateCategoryFormProps) {
-  const [formData, setFormData] = useState<CreateCategoryRequest>({
-    name: "",
-    description: "",
-  });
+  const [formData, setFormData] = useState<CreateCategoryRequest>(
+    initialData || {
+      name: "",
+      description: "",
+    }
+  );
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -65,7 +69,7 @@ export default function CreateCategoryForm({
           type="submit"
           className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white"
         >
-          建立
+          {initialData ? "更新" : "建立"}
         </button>
       </div>
     </form>

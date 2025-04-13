@@ -4,22 +4,26 @@ import { FormEvent, useState } from "react";
 
 interface CreateTodoFormProps {
   categories: Category[];
+  initialData?: CreateTodoRequest;
   onSubmit: (data: CreateTodoRequest) => void;
   onCancel: () => void;
 }
 
 export default function CreateTodoForm({
   categories,
+  initialData,
   onSubmit,
   onCancel,
 }: CreateTodoFormProps) {
-  const [formData, setFormData] = useState<CreateTodoRequest>({
-    title: "",
-    description: "",
-    categoryId: categories[0]?.id || "",
-    priority: Priority.Medium,
-    dueDate: new Date().toISOString().split("T")[0],
-  });
+  const [formData, setFormData] = useState<CreateTodoRequest>(
+    initialData || {
+      title: "",
+      description: "",
+      categoryId: categories[0]?.id || "",
+      priority: Priority.Medium,
+      dueDate: new Date().toISOString().split("T")[0],
+    }
+  );
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -137,7 +141,7 @@ export default function CreateTodoForm({
           type="submit"
           className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white"
         >
-          建立
+          {initialData ? "更新" : "建立"}
         </button>
       </div>
     </form>
