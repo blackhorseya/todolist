@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,10 +15,10 @@ import (
 )
 
 func main() {
-	// 載入設定檔
-	cfg, err := configs.LoadConfig("../../configs/config.yaml")
+	// 載入環境變數與設定
+	cfg, err := configs.LoadEnv("")
 	if err != nil {
-		log.Fatalf("載入設定檔失敗: %v", err)
+		log.Fatalf("載入設定失敗: %v", err)
 	}
 
 	// TODO: 初始化資料庫連線
@@ -37,7 +38,7 @@ func main() {
 
 	// 在背景執行伺服器
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err = srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("HTTP 伺服器錯誤: %v", err)
 		}
 	}()

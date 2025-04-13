@@ -8,7 +8,7 @@ help: ## show help
 
 .PHONY: clean
 clean: ## Clean up the build artifacts
-	rm -rf $(BIN) coverage.txt dist .env
+	rm -rf $(BIN) coverage.txt dist
 
 .PHONY: install
 install: install-tools
