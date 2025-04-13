@@ -2,6 +2,8 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/blackhorseya/todolist/internal/delivery/http/handler"
 )
@@ -13,24 +15,31 @@ func NewRouter(
 ) *gin.Engine {
 	r := gin.Default()
 
-	// 待辦事項相關路由
-	todos := r.Group("/api/todos")
-	{
-		todos.POST("", todoHandler.CreateTodo)
-		todos.GET("", todoHandler.ListTodos)
-		todos.GET("/:id", todoHandler.GetTodo)
-		todos.PUT("/:id", todoHandler.UpdateTodo)
-		todos.DELETE("/:id", todoHandler.DeleteTodo)
-	}
+	// Swagger 文件路由
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// 分類相關路由
-	categories := r.Group("/api/categories")
+	// API v1 路由群組
+	v1 := r.Group("/api/v1")
 	{
-		categories.POST("", categoryHandler.CreateCategory)
-		categories.GET("", categoryHandler.ListCategories)
-		categories.GET("/:id", categoryHandler.GetCategory)
-		categories.PUT("/:id", categoryHandler.UpdateCategory)
-		categories.DELETE("/:id", categoryHandler.DeleteCategory)
+		// 待辦事項相關路由
+		todos := v1.Group("/todos")
+		{
+			todos.POST("", todoHandler.CreateTodo)
+			todos.GET("", todoHandler.ListTodos)
+			todos.GET("/:id", todoHandler.GetTodo)
+			todos.PUT("/:id", todoHandler.UpdateTodo)
+			todos.DELETE("/:id", todoHandler.DeleteTodo)
+		}
+
+		// 分類相關路由
+		categories := v1.Group("/categories")
+		{
+			categories.POST("", categoryHandler.CreateCategory)
+			categories.GET("", categoryHandler.ListCategories)
+			categories.GET("/:id", categoryHandler.GetCategory)
+			categories.PUT("/:id", categoryHandler.UpdateCategory)
+			categories.DELETE("/:id", categoryHandler.DeleteCategory)
+		}
 	}
 
 	return r

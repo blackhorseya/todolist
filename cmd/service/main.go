@@ -11,9 +11,24 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/blackhorseya/todolist/docs" // 匯入 swagger 文件
 	deliveryHttp "github.com/blackhorseya/todolist/internal/delivery/http"
 	"github.com/blackhorseya/todolist/internal/delivery/http/handler"
 )
+
+// @title           待辦事項清單 API
+// @version         1.0
+// @description     此為使用 Clean Architecture 和 DDD 實作的待辦事項清單 API
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    https://github.com/blackhorseya/todolist
+// @contact.email  support@example.com
+
+// @license.name  MIT
+// @license.url   https://github.com/blackhorseya/todolist/blob/main/LICENSE
+
+// @BasePath  /api
 
 func main() {
 	// 初始化應用程式

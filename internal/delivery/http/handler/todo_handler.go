@@ -32,7 +32,16 @@ type CreateTodoRequest struct {
 	CategoryID  string          `json:"categoryId" binding:"required"`
 }
 
-// CreateTodo 處理建立待辦事項的請求
+// @Summary     建立待辦事項
+// @Description 建立新的待辦事項
+// @Tags        待辦事項
+// @Accept      json
+// @Produce     json
+// @Param       request body     CreateTodoRequest true "待辦事項資訊"
+// @Success     201    {object}  entity.Todo
+// @Failure     400    {object}  map[string]string
+// @Failure     500    {object}  map[string]string
+// @Router      /v1/todos [post]
 func (h *TodoHandler) CreateTodo(c *gin.Context) {
 	var req CreateTodoRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -61,7 +70,17 @@ func (h *TodoHandler) CreateTodo(c *gin.Context) {
 	c.JSON(http.StatusCreated, todo)
 }
 
-// ListTodos 處理列出待辦事項的請求
+// @Summary     列出待辦事項
+// @Description 取得所有待辦事項列表，可依照分類、狀態和優先級別進行過濾
+// @Tags        待辦事項
+// @Accept      json
+// @Produce     json
+// @Param       categoryId query    string  false "分類 ID"
+// @Param       status     query    int     false "狀態"
+// @Param       priority   query    int     false "優先級別"
+// @Success     200       {array}   entity.Todo
+// @Failure     500       {object}  map[string]string
+// @Router      /v1/todos [get]
 func (h *TodoHandler) ListTodos(c *gin.Context) {
 	categoryID := c.Query("categoryId")
 	statusStr := c.Query("status")
@@ -97,7 +116,16 @@ func (h *TodoHandler) ListTodos(c *gin.Context) {
 	c.JSON(http.StatusOK, todos)
 }
 
-// GetTodo 處理獲取單一待辦事項的請求
+// @Summary     取得待辦事項
+// @Description 透過 ID 取得特定待辦事項
+// @Tags        待辦事項
+// @Accept      json
+// @Produce     json
+// @Param       id  path     string true "待辦事項 ID"
+// @Success     200 {object} entity.Todo
+// @Failure     404 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /v1/todos/{id} [get]
 func (h *TodoHandler) GetTodo(c *gin.Context) {
 	id := c.Param("id")
 	todo, err := h.todoUC.GetTodo(c.Request.Context(), id)
@@ -124,7 +152,17 @@ type UpdateTodoRequest struct {
 	CategoryID  string          `json:"categoryId"`
 }
 
-// UpdateTodo 處理更新待辦事項的請求
+// @Summary     更新待辦事項
+// @Description 更新特定待辦事項的資訊
+// @Tags        待辦事項
+// @Accept      json
+// @Produce     json
+// @Param       id      path     string           true "待辦事項 ID"
+// @Param       request body     UpdateTodoRequest true "更新資訊"
+// @Success     200     {object} entity.Todo
+// @Failure     400     {object} map[string]string
+// @Failure     500     {object} map[string]string
+// @Router      /v1/todos/{id} [put]
 func (h *TodoHandler) UpdateTodo(c *gin.Context) {
 	id := c.Param("id")
 	var req UpdateTodoRequest
@@ -156,7 +194,15 @@ func (h *TodoHandler) UpdateTodo(c *gin.Context) {
 	c.JSON(http.StatusOK, todo)
 }
 
-// DeleteTodo 處理刪除待辦事項的請求
+// @Summary     刪除待辦事項
+// @Description 刪除特定待辦事項
+// @Tags        待辦事項
+// @Accept      json
+// @Produce     json
+// @Param       id  path     string true "待辦事項 ID"
+// @Success     204 {string} string "No Content"
+// @Failure     500 {object} map[string]string
+// @Router      /v1/todos/{id} [delete]
 func (h *TodoHandler) DeleteTodo(c *gin.Context) {
 	id := c.Param("id")
 	err := h.todoUC.DeleteTodo(c.Request.Context(), id)

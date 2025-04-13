@@ -1,0 +1,450 @@
+basePath: /api
+definitions:
+  entity.Category:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  entity.Priority:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - Low
+    - Medium
+    - High
+  entity.Status:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - TodoStatus
+    - InProgress
+    - Done
+  entity.Todo:
+    properties:
+      categoryID:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      dueDate:
+        type: string
+      id:
+        type: string
+      priority:
+        $ref: '#/definitions/entity.Priority'
+      status:
+        $ref: '#/definitions/entity.Status'
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  handler.CreateCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  handler.CreateTodoRequest:
+    properties:
+      categoryId:
+        type: string
+      description:
+        type: string
+      dueDate:
+        type: string
+      priority:
+        $ref: '#/definitions/entity.Priority'
+      title:
+        type: string
+    required:
+    - categoryId
+    - dueDate
+    - priority
+    - title
+    type: object
+  handler.UpdateCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  handler.UpdateTodoRequest:
+    properties:
+      categoryId:
+        type: string
+      description:
+        type: string
+      dueDate:
+        type: string
+      priority:
+        $ref: '#/definitions/entity.Priority'
+      status:
+        $ref: '#/definitions/entity.Status'
+      title:
+        type: string
+    type: object
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+    url: https://github.com/blackhorseya/todolist
+  description: 此為使用 Clean Architecture 和 DDD 實作的待辦事項清單 API
+  license:
+    name: MIT
+    url: https://github.com/blackhorseya/todolist/blob/main/LICENSE
+  termsOfService: http://swagger.io/terms/
+  title: 待辦事項清單 API
+  version: "1.0"
+paths:
+  /v1/categories:
+    get:
+      consumes:
+      - application/json
+      description: 取得所有分類列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Category'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 列出分類
+      tags:
+      - 分類
+    post:
+      consumes:
+      - application/json
+      description: 建立新的分類
+      parameters:
+      - description: 分類資訊
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Category'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 建立分類
+      tags:
+      - 分類
+  /v1/categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 刪除特定分類
+      parameters:
+      - description: 分類 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 刪除分類
+      tags:
+      - 分類
+    get:
+      consumes:
+      - application/json
+      description: 透過 ID 取得特定分類
+      parameters:
+      - description: 分類 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Category'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 取得分類
+      tags:
+      - 分類
+    put:
+      consumes:
+      - application/json
+      description: 更新特定分類的資訊
+      parameters:
+      - description: 分類 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 更新資訊
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Category'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 更新分類
+      tags:
+      - 分類
+  /v1/todos:
+    get:
+      consumes:
+      - application/json
+      description: 取得所有待辦事項列表，可依照分類、狀態和優先級別進行過濾
+      parameters:
+      - description: 分類 ID
+        in: query
+        name: categoryId
+        type: string
+      - description: 狀態
+        in: query
+        name: status
+        type: integer
+      - description: 優先級別
+        in: query
+        name: priority
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Todo'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 列出待辦事項
+      tags:
+      - 待辦事項
+    post:
+      consumes:
+      - application/json
+      description: 建立新的待辦事項
+      parameters:
+      - description: 待辦事項資訊
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Todo'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 建立待辦事項
+      tags:
+      - 待辦事項
+  /v1/todos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 刪除特定待辦事項
+      parameters:
+      - description: 待辦事項 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 刪除待辦事項
+      tags:
+      - 待辦事項
+    get:
+      consumes:
+      - application/json
+      description: 透過 ID 取得特定待辦事項
+      parameters:
+      - description: 待辦事項 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Todo'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 取得待辦事項
+      tags:
+      - 待辦事項
+    put:
+      consumes:
+      - application/json
+      description: 更新特定待辦事項的資訊
+      parameters:
+      - description: 待辦事項 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 更新資訊
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Todo'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 更新待辦事項
+      tags:
+      - 待辦事項
+swagger: "2.0"

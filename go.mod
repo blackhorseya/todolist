@@ -7,6 +7,8 @@ require (
 	github.com/golangci/golangci-lint v1.64.8
 	github.com/google/wire v0.6.0
 	github.com/joho/godotenv v1.5.1
+	github.com/swaggo/files v1.0.1
+	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.4
 	go.mongodb.org/mongo-driver v1.17.3
 	go.uber.org/mock v0.5.1
