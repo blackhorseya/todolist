@@ -33,3 +33,20 @@ export interface Todo {
   createdAt: string;
   updatedAt: string;
 }
+
+// 番茄鐘狀態列舉
+export enum PomodoroStatus {
+  Idle = 'IDLE',
+  Running = 'RUNNING',
+  Paused = 'PAUSED',
+  Break = 'BREAK',
+}
+
+// 番茄鐘實體介面
+export interface Pomodoro {
+  todoId: string;
+  status: PomodoroStatus;
+  timeLeft: number;
+  totalTime: number;
+  breakTime: number;
+}

@@ -7,6 +7,7 @@ import CategoryList from "./components/CategoryList";
 import CreateCategoryForm from "./components/CreateCategoryForm";
 import CreateTodoForm from "./components/CreateTodoForm";
 import TodoItem from "./components/TodoItem";
+import PomodoroModal from "./components/PomodoroModal";
 import { CategoryService } from "./services/categoryService";
 import { TodoService } from "./services/todoService";
 
@@ -18,6 +19,7 @@ export default function Home() {
   const [showCreateTodo, setShowCreateTodo] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
 
   const categoryService = new CategoryService();
   const todoService = new TodoService();
@@ -145,6 +147,10 @@ export default function Home() {
     setEditingTodo(todo);
   };
 
+  const handleStartPomodoro = (todo: Todo) => {
+    setSelectedTodo(todo);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8">
@@ -226,10 +232,18 @@ export default function Home() {
                     onStatusChange={handleUpdateTodoStatus}
                     onDelete={handleDeleteTodo}
                     onEdit={handleEditTodo}
+                    onStartPomodoro={handleStartPomodoro}
                   />
                 ))}
               </div>
             </div>
+
+            {selectedTodo && (
+              <PomodoroModal
+                todo={selectedTodo}
+                onClose={() => setSelectedTodo(null)}
+              />
+            )}
           </main>
         </div>
       </div>
