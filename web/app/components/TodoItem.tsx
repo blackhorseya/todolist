@@ -5,6 +5,7 @@ interface TodoItemProps {
   onStatusChange?: (id: string, status: TodoStatus) => void;
   onDelete?: (id: string) => void;
   onEdit?: (todo: Todo) => void;
+  onStartPomodoro?: (todo: Todo) => void;
 }
 
 const priorityLabels: Record<Priority, { text: string; className: string }> = {
@@ -22,7 +23,7 @@ const priorityLabels: Record<Priority, { text: string; className: string }> = {
   },
 };
 
-export default function TodoItem({ todo, onStatusChange, onDelete, onEdit }: TodoItemProps) {
+export default function TodoItem({ todo, onStatusChange, onDelete, onEdit, onStartPomodoro }: TodoItemProps) {
   const priorityLabel = priorityLabels[todo.priority];
   
   return (
@@ -50,6 +51,13 @@ export default function TodoItem({ todo, onStatusChange, onDelete, onEdit }: Tod
         <span className={`px-2 py-1 text-xs rounded-full ${priorityLabel.className}`}>
           {priorityLabel.text}
         </span>
+        <button
+          onClick={() => onStartPomodoro?.(todo)}
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg"
+        >
+          <span className="sr-only">開始番茄鐘</span>
+          🍅
+        </button>
         <button
           onClick={() => onEdit?.(todo)}
           className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg"
